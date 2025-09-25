@@ -3,178 +3,591 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Bloco de Notas — Unificado</title>
+    <title>Bloco de Notas — Moderno</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         @import url('https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css');
 
         :root {
-            --bg: #0f1724;
-            --card: #0b1220;
-            --accent: #06b6d4;
-            --muted: #94a3b8;
-            --glass: rgba(255, 255, 255, 0.03);
-            --text: #e6eef6;
-            --shadow: rgba(0, 0, 0, 0.4);
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-tertiary: #1a1a24;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 10px 25px -3px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --blur: blur(16px);
         }
-        body.light {
-            --bg: #f9fafb;
-            --card: #ffffff;
-            --accent: #2563eb;
-            --muted: #6b7280;
-            --glass: rgba(0, 0, 0, 0.03);
-            --text: #111827;
-            --shadow: rgba(0, 0, 0, 0.1);
+
+        [data-theme="light"] {
+            --bg-primary: #fafafa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f4f4f5;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #6366f1;
+            --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #06b6d4 100%);
+            --text-primary: #18181b;
+            --text-secondary: #52525b;
+            --text-muted: #a1a1aa;
+            --border: rgba(0, 0, 0, 0.08);
+            --glass: rgba(0, 0, 0, 0.02);
+            --glass-border: rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --blur: blur(16px);
         }
-        * { box-sizing: border-box; }
-        body {
+
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+        }
+
+        body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
-            background: var(--bg);
-            color: var(--text);
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding: 1.5rem 2rem;
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-gradient);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            transition: background 0.3s, color 0.3s;
-            line-height: 1.6;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
         }
-        .wrap { width: 100%; max-width: 1200px; }
-        header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; justify-content: space-between; }
-        h1 { font-size: 1.5rem; font-weight: 600; margin: 0; }
-        .card { background: var(--card); padding: 18px; border-radius: 12px; box-shadow: 0 10px 30px var(--shadow); transition: background 0.3s; }
-        .toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; align-items: center; }
-        .group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-        label { font-size: 0.95rem; color: var(--muted); }
-        input[type="checkbox"] { accent-color: var(--accent); }
-        button { background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.1); color: inherit; padding: 10px 14px; border-radius: 8px; cursor: pointer; transition: background 0.3s, transform 0.1s, box-shadow 0.3s; }
-        button.primary { background: linear-gradient(135deg, var(--accent) 0%, #3590ff 100%); border: none; color: #fff; font-weight: 500; }
-        button:hover { background: rgba(255, 255, 255, 0.2); box-shadow: 0 4px 15px var(--shadow); }
-        button.primary:hover { background: linear-gradient(135deg, #3590ff 0%, var(--accent) 100%); }
-        button:active { transform: translateY(1px); }
 
-        .editor { display: flex; gap: 20px; }
-        .editor-container { flex: 1; display: flex; gap: 20px; }
-        textarea, .preview {
-            flex: 1; min-height: 420px; resize: vertical; padding: 16px; border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1); background: var(--glass); color: inherit;
-            font-size: 1rem; line-height: 1.45; transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        .logo h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        textarea { font-family: Arial, sans-serif; }
-        textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2); }
-        .preview { background: var(--card); overflow-y: auto; }
-        .markdown-body { background-color: transparent !important; color: var(--text) !important; }
-        .markdown-body a { color: var(--accent) !important; }
 
-        .meta { width: 220px; min-width: 180px; }
-        .meta .card-inner { background: transparent; padding: 8px; border-radius: 8px; }
-        .stat { font-size: 1rem; margin-bottom: 8px; }
-        .muted { color: var(--muted); font-size: 0.9rem; }
-        .small { font-size: 0.9rem; }
-        .controls { display: flex; flex-direction: column; gap: 10px; }
-        .row { display: flex; gap: 8px; }
-        .notice { font-size: 0.85rem; color: var(--muted); margin-top: 8px; }
-
-        .select-container { display: flex; gap: 8px; align-items: center; }
-        select {
-            padding: 8px;
-            border-radius: 8px;
+        .theme-toggle {
             background: var(--glass);
-            color: inherit;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            appearance: none;
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
             cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-gradient);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 2rem;
+            height: calc(100vh - 200px);
+        }
+
+        /* Editor Section */
+        .editor-section {
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toolbar {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+        }
+
+        .toolbar-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .toolbar-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toolbar-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
             min-width: 80px;
         }
-        select:focus { outline: none; border-color: var(--accent); }
 
-        @media (max-width: 820px) {
-            .editor { flex-direction: column; gap: 20px; }
-            .editor-container { flex-direction: column; }
-            .meta { width: 100%; }
-            .toolbar { flex-direction: column; align-items: flex-start; }
-            .group { width: 100%; justify-content: space-between; }
+        .btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.625rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.875rem;
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
         }
-        @media (max-width: 500px) {
-            h1 { font-size: 1.25rem; }
-            .toolbar .group:last-child {
-                flex-direction: column;
-                width: 100%;
-                gap: 8px;
+
+        .btn:hover {
+            background: var(--accent-primary);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+            border-color: var(--accent-primary);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .select {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.625rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            appearance: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            min-width: 80px;
+        }
+
+        .select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .editor {
+            flex: 1;
+            padding: 0;
+            margin: 0;
+        }
+
+        .editor textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 2rem;
+            resize: none;
+            font-family: 'Inter', monospace;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .editor textarea:focus {
+            outline: none;
+        }
+
+        .editor textarea::placeholder {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stats-card,
+        .controls-card {
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .stats-card h3,
+        .controls-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .saved-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .controls-grid .btn {
+            padding: 0.75rem 1rem;
+            text-align: center;
+            border-radius: 12px;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-gradient);
+            filter: brightness(1.1);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+        }
+
+        .shortcuts {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .shortcuts strong {
+            color: var(--accent-primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto;
             }
-            .toolbar .group:last-child button { width: 100%; }
+
+            .sidebar {
+                flex-direction: row;
+            }
+
+            .stats-card,
+            .controls-card {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1rem 1.5rem;
+                border-radius: 16px;
+            }
+
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+
+            .toolbar {
+                padding: 1rem 1.5rem;
+            }
+
+            .toolbar-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+
+            .toolbar-group {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+
+            .toolbar-label {
+                min-width: auto;
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .sidebar {
+                flex-direction: column;
+            }
+
+            .main-content {
+                height: auto;
+                min-height: calc(100vh - 180px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .editor textarea {
+                padding: 1.5rem 1rem;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-secondary);
+        }
+
+        /* Animation for stats */
+        .stat-value {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Focus states */
+        .btn:focus,
+        .select:focus {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
         }
     </style>
 </head>
 <body>
-    <div class="wrap">
-        <header>
-            <h1>Bloco de Notas — Unificado</h1>
-            <button id="themeToggle">Alternar Tema</button>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">N</div>
+                <h1>Bloco de Notas</h1>
+            </div>
+            <button class="theme-toggle" id="themeToggle">🌙 Tema Escuro</button>
         </header>
 
-        <div class="card">
-            <div class="toolbar">
-                <div class="group">
-                    <label class="muted">Capitalização:</label>
-                    <button id="uppercaseBtn">MAIÚSCULO</button>
-                    <button id="lowercaseBtn">minúsculo</button>
-                    <button id="originalCaseBtn">Original</button>
-                </div>
-                <div class="group">
-                    <label class="muted">Alinhamento:</label>
-                    <button id="alignLeftBtn">Esquerda</button>
-                    <button id="alignRightBtn">Direita</button>
-                    <button id="alignCenterBtn">Centro</button>
-                    <button id="alignJustifyBtn">Justificado</button>
-                    <button id="alignOriginalBtn">Original</button>
-                </div>
-                <div class="group">
-                    <label class="muted">Fonte:</label>
-                    <div class="select-container">
-                        <select id="fontSizeSelect">
-                            <option value="14px">14px</option>
-                            <option value="16px" selected>16px</option>
-                            <option value="18px">18px</option>
-                            <option value="20px">20px</option>
-                            <option value="22px">22px</option>
-                            <option value="24px">24px</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="editor">
-                <div class="editor-container">
-                    <textarea id="note" placeholder="Digite ou cole aqui sua nota..." spellcheck="true"></textarea>
-                </div>
-
-                <aside class="meta">
-                    <div class="card-inner">
-                        <div class="stat"><strong id="chars">0</strong> caracteres</div>
-                        <div class="stat"><strong id="words">0</strong> palavras</div>
-                        <div class="stat muted">Salvamento: <span id="savedStatus">—</span></div>
-
-                        <div class="controls" style="margin-top:12px">
-                            <div class="row"><button id="saveBtn" class="primary">Salvar</button><button id="copyBtn">Copiar</button></div>
-                            <div class="row"><button id="exportTxtBtn">Exportar .txt</button><button id="exportPdfBtn">Exportar .pdf</button></div>
-                            <div class="row"><button id="clearBtn">Limpar</button><button id="loadBtn">Carregar salvo</button></div>
-                            <div class="row"><button id="delBtn">Apagar salvo</button></div>
-                            <div class="notice">Atalhos: <strong>Ctrl/Cmd + S</strong> salvar</div>
+        <div class="main-content">
+            <section class="editor-section">
+                <div class="toolbar">
+                    <div class="toolbar-row">
+                        <div class="toolbar-group">
+                            <span class="toolbar-label">Capitalização</span>
+                            <button class="btn" id="uppercaseBtn">MAIÚSCULO</button>
+                            <button class="btn" id="lowercaseBtn">minúsculo</button>
+                            <button class="btn" id="originalCaseBtn">Original</button>
                         </div>
                     </div>
-                </aside>
-            </div>
+                    
+                    <div class="toolbar-row">
+                        <div class="toolbar-group">
+                            <span class="toolbar-label">Alinhamento</span>
+                            <button class="btn" id="alignLeftBtn">⬅️ Esquerda</button>
+                            <button class="btn" id="alignCenterBtn">⬆️ Centro</button>
+                            <button class="btn" id="alignRightBtn">➡️ Direita</button>
+                            <button class="btn" id="alignJustifyBtn">↔️ Justificar</button>
+                            <button class="btn" id="alignOriginalBtn">🔄 Original</button>
+                        </div>
+                    </div>
+                    
+                    <div class="toolbar-row">
+                        <div class="toolbar-group">
+                            <span class="toolbar-label">Fonte</span>
+                            <select class="select" id="fontSizeSelect">
+                                <option value="14px">14px</option>
+                                <option value="16px" selected>16px</option>
+                                <option value="18px">18px</option>
+                                <option value="20px">20px</option>
+                                <option value="22px">22px</option>
+                                <option value="24px">24px</option>
+                                <option value="26px">26px</option>
+                                <option value="28px">28px</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="editor">
+                    <textarea 
+                        id="note" 
+                        placeholder="✨ Comece a escrever sua nota aqui... Use Ctrl/Cmd + S para salvar rapidamente!"
+                        spellcheck="true"
+                    ></textarea>
+                </div>
+            </section>
+
+            <aside class="sidebar">
+                <div class="stats-card">
+                    <h3>📊 Estatísticas</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Caracteres</span>
+                        <span class="stat-value" id="chars">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Palavras</span>
+                        <span class="stat-value" id="words">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Linhas</span>
+                        <span class="stat-value" id="lines">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Status</span>
+                        <span class="saved-status" id="savedStatus">Não salvo</span>
+                    </div>
+                </div>
+
+                <div class="controls-card">
+                    <h3>🛠️ Controles</h3>
+                    <div class="controls-grid">
+                        <button class="btn btn-primary" id="saveBtn">💾 Salvar</button>
+                        <button class="btn" id="copyBtn">📋 Copiar</button>
+                        <button class="btn" id="exportTxtBtn">📄 Exportar TXT</button>
+                        <button class="btn" id="exportPdfBtn">📑 Exportar PDF</button>
+                        <button class="btn" id="loadBtn">📂 Carregar</button>
+                        <button class="btn btn-danger" id="clearBtn">🗑️ Limpar</button>
+                        <button class="btn btn-danger" id="delBtn" style="grid-column: 1 / -1;">❌ Apagar Salvo</button>
+                    </div>
+                    
+                    <div class="shortcuts">
+                        <strong>Atalhos:</strong><br>
+                        <strong>Ctrl/Cmd + S</strong> - Salvar<br>
+                        <strong>Ctrl/Cmd + A</strong> - Selecionar tudo
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
+        // Elements
         const note = document.getElementById('note');
         const chars = document.getElementById('chars');
         const words = document.getElementById('words');
+        const lines = document.getElementById('lines');
         const savedStatus = document.getElementById('savedStatus');
         const saveBtn = document.getElementById('saveBtn');
         const copyBtn = document.getElementById('copyBtn');
@@ -197,77 +610,173 @@
 
         const fontSizeSelect = document.getElementById('fontSizeSelect');
 
-        const STORAGE_KEY = 'blocoNotas_unificado_v3';
+        const STORAGE_KEY = 'blocoNotas_moderno_v1';
         let originalText = '';
+        let isLightTheme = false;
 
+        // Update statistics with animation
         function updateStats(text) {
-            chars.textContent = text.length;
-            words.textContent = (text.trim().length === 0) ? 0 : text.trim().split(/\s+/).length;
+            const charCount = text.length;
+            const wordCount = text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
+            const lineCount = text.split('\n').length;
+            
+            // Animate the numbers
+            animateNumber(chars, parseInt(chars.textContent), charCount);
+            animateNumber(words, parseInt(words.textContent), wordCount);
+            animateNumber(lines, parseInt(lines.textContent), lineCount);
         }
 
+        function animateNumber(element, start, end) {
+            const duration = 300;
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.round(current);
+            }, 16);
+        }
+
+        // Load saved content
         function loadSaved() {
             const data = localStorage.getItem(STORAGE_KEY);
             if (data) {
-                const noteData = JSON.parse(data);
-                originalText = noteData.text;
-                note.value = originalText;
-                note.style.fontSize = noteData.fontSize;
-                note.style.textAlign = noteData.textAlign;
-                
-                fontSizeSelect.value = noteData.fontSize;
-                
-                updateStats(originalText);
-                savedStatus.textContent = 'salvo localmente';
+                try {
+                    const noteData = JSON.parse(data);
+                    originalText = noteData.text;
+                    note.value = originalText;
+                    note.style.fontSize = noteData.fontSize || '16px';
+                    note.style.textAlign = noteData.textAlign || 'start';
+                    
+                    fontSizeSelect.value = noteData.fontSize || '16px';
+                    
+                    updateStats(originalText);
+                    updateSavedStatus('Carregado do armazenamento');
+                } catch (e) {
+                    console.error('Erro ao carregar dados salvos:', e);
+                }
             } else {
-                savedStatus.textContent = '—';
+                updateSavedStatus('Novo documento');
                 note.value = '';
                 originalText = '';
                 updateStats('');
             }
         }
 
+        // Save content
         function save() {
             const noteData = {
                 text: note.value,
-                fontSize: note.style.fontSize,
-                textAlign: note.style.textAlign
+                fontSize: note.style.fontSize || '16px',
+                textAlign: note.style.textAlign || 'start',
+                timestamp: new Date().toISOString()
             };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(noteData));
-            savedStatus.textContent = 'salvo (manual)';
-            updateStats(note.value);
+            
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(noteData));
+                updateSavedStatus('✅ Salvo com sucesso');
+                updateStats(note.value);
+                
+                // Show success feedback
+                saveBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                setTimeout(() => {
+                    saveBtn.style.background = '';
+                }, 1000);
+            } catch (e) {
+                updateSavedStatus('❌ Erro ao salvar');
+                console.error('Erro ao salvar:', e);
+            }
         }
 
+        // Update saved status
+        function updateSavedStatus(message) {
+            savedStatus.textContent = message;
+            savedStatus.style.opacity = '0';
+            setTimeout(() => {
+                savedStatus.style.opacity = '1';
+            }, 100);
+        }
+
+        // Export as TXT
         function exportTxt() {
             const blob = new Blob([note.value], { type: 'text/plain;charset=utf-8' });
             const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'nota.txt';
+            const url = URL.createObjectURL(blob);
+            const date = new Date().toISOString().split('T')[0];
+            
+            a.href = url;
+            a.download = `nota-${date}.txt`;
+            document.body.appendChild(a);
             a.click();
-            URL.revokeObjectURL(a.href);
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            updateSavedStatus('📄 Exportado como TXT');
         }
 
+        // Export as PDF
         function exportPdf() {
-            const preview = document.createElement('div');
-            preview.innerHTML = note.value.replace(/\n/g, '<br>');
-            preview.style.fontFamily = 'Arial, sans-serif';
-            preview.style.fontSize = note.style.fontSize;
-            preview.style.textAlign = note.style.textAlign;
+            const content = document.createElement('div');
+            content.innerHTML = note.value.replace(/\n/g, '<br>');
+            content.style.fontFamily = 'Inter, Arial, sans-serif';
+            content.style.fontSize = note.style.fontSize || '16px';
+            content.style.textAlign = note.style.textAlign || 'start';
+            content.style.lineHeight = '1.6';
+            content.style.color = '#000';
+            content.style.padding = '20px';
             
-            html2pdf().from(preview).set({
-                margin: 10,
-                filename: 'nota.pdf',
+            const date = new Date().toISOString().split('T')[0];
+            
+            html2pdf().from(content).set({
+                margin: 15,
+                filename: `nota-${date}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            }).save();
+            }).save().then(() => {
+                updateSavedStatus('📑 Exportado como PDF');
+            });
         }
 
+        // Copy to clipboard
         async function copyToClipboard() {
             try {
                 await navigator.clipboard.writeText(note.value);
-                savedStatus.textContent = 'copiado';
+                updateSavedStatus('📋 Copiado para área de transferência');
+                
+                // Visual feedback
+                copyBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                copyBtn.style.color = 'white';
+                setTimeout(() => {
+                    copyBtn.style.background = '';
+                    copyBtn.style.color = '';
+                }, 1000);
             } catch (e) {
-                alert('Não foi possível copiar automaticamente.');
+                updateSavedStatus('❌ Erro ao copiar');
+                console.error('Erro ao copiar:', e);
+            }
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            isLightTheme = !isLightTheme;
+            document.body.setAttribute('data-theme', isLightTheme ? 'light' : 'dark');
+            themeToggle.textContent = isLightTheme ? '☀️ Tema Claro' : '🌙 Tema Escuro';
+            localStorage.setItem('theme-preference', isLightTheme ? 'light' : 'dark');
+        }
+
+        // Load theme preference
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme-preference');
+            if (savedTheme === 'light') {
+                isLightTheme = true;
+                document.body.setAttribute('data-theme', 'light');
+                themeToggle.textContent = '☀️ Tema Claro';
             }
         }
 
@@ -275,20 +784,26 @@
         note.addEventListener('input', () => {
             updateStats(note.value);
             originalText = note.value;
+            updateSavedStatus('Não salvo');
         });
 
+        // Text transformation
         uppercaseBtn.addEventListener('click', () => {
             note.value = note.value.toUpperCase();
+            updateStats(note.value);
         });
 
         lowercaseBtn.addEventListener('click', () => {
             note.value = note.value.toLowerCase();
+            updateStats(note.value);
         });
 
         originalCaseBtn.addEventListener('click', () => {
             note.value = originalText;
+            updateStats(note.value);
         });
 
+        // Text alignment
         alignLeftBtn.addEventListener('click', () => {
             note.style.textAlign = 'left';
         });
@@ -309,43 +824,125 @@
             note.style.textAlign = 'start';
         });
 
+        // Font size
         fontSizeSelect.addEventListener('change', () => {
             note.style.fontSize = fontSizeSelect.value;
         });
 
+        // Controls
         saveBtn.addEventListener('click', save);
         copyBtn.addEventListener('click', copyToClipboard);
         exportTxtBtn.addEventListener('click', exportTxt);
         exportPdfBtn.addEventListener('click', exportPdf);
+        
         clearBtn.addEventListener('click', () => {
-            if (confirm('Limpar o editor?')) {
+            if (confirm('🗑️ Tem certeza que deseja limpar todo o conteúdo do editor?')) {
                 note.value = '';
                 originalText = '';
                 updateStats('');
-                savedStatus.textContent = '—';
+                updateSavedStatus('Documento limpo');
             }
         });
+        
         loadBtn.addEventListener('click', loadSaved);
+        
         delBtn.addEventListener('click', () => {
-            if (confirm('Apagar o conteúdo salvo localmente?')) {
+            if (confirm('❌ Tem certeza que deseja apagar permanentemente o conteúdo salvo?')) {
                 localStorage.removeItem(STORAGE_KEY);
-                savedStatus.textContent = 'salvo removido';
+                updateSavedStatus('🗑️ Conteúdo salvo removido');
             }
         });
 
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
                 e.preventDefault();
                 save();
             }
+            
+            // Additional shortcuts
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'c') {
+                e.preventDefault();
+                copyToClipboard();
+            }
+            
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'e') {
+                e.preventDefault();
+                exportTxt();
+            }
         });
 
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('light');
+        // Auto-save functionality (optional)
+        let autoSaveTimer;
+        note.addEventListener('input', () => {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => {
+                if (note.value.trim().length > 0) {
+                    save();
+                    updateSavedStatus('💾 Auto-salvo');
+                }
+            }, 3000); // Auto-save after 3 seconds of inactivity
         });
 
-        loadSaved();
-        updateStats(note.value);
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            loadSaved();
+            updateStats(note.value);
+            
+            // Focus on the textarea
+            note.focus();
+        });
+
+        // Handle page visibility change (save when leaving page)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden' && note.value.trim().length > 0) {
+                save();
+            }
+        });
+
+        // Handle beforeunload (save before closing)
+        window.addEventListener('beforeunload', (e) => {
+            if (note.value.trim().length > 0 && savedStatus.textContent.includes('Não salvo')) {
+                save();
+            }
+        });
+
+        // Smooth scrolling for textarea
+        note.addEventListener('scroll', () => {
+            note.style.scrollBehavior = 'smooth';
+        });
+
+        // Word count animation when typing
+        let typingTimer;
+        note.addEventListener('keyup', () => {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => {
+                // Add a subtle pulse effect to stats when updated
+                const statValues = document.querySelectorAll('.stat-value');
+                statValues.forEach(stat => {
+                    stat.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        stat.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            }, 500);
+        });
+
+        // Responsive font size adjustment
+        function adjustFontSize() {
+            if (window.innerWidth < 768) {
+                if (note.style.fontSize === '' || parseInt(note.style.fontSize) > 18) {
+                    note.style.fontSize = '16px';
+                    fontSizeSelect.value = '16px';
+                }
+            }
+        }
+
+        window.addEventListener('resize', adjustFontSize);
+        adjustFontSize(); // Call on initial load
     </script>
 </body>
 </html>
