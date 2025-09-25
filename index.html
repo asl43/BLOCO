@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Bloco de Notas — Unificado</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css');
+
+        :root {
+            --bg: #0f1724;
+            --card: #0b1220;
+            --accent: #06b6d4;
+            --muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --text: #e6eef6;
+            --shadow: rgba(0, 0, 0, 0.4);
+        }
+        body.light {
+            --bg: #f9fafb;
+            --card: #ffffff;
+            --accent: #2563eb;
+            --muted: #6b7280;
+            --glass: rgba(0, 0, 0, 0.03);
+            --text: #111827;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 0.3s, color 0.3s;
+            line-height: 1.6;
+        }
+        .wrap { width: 100%; max-width: 1200px; }
+        header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; justify-content: space-between; }
+        h1 { font-size: 1.5rem; font-weight: 600; margin: 0; }
+        .card { background: var(--card); padding: 18px; border-radius: 12px; box-shadow: 0 10px 30px var(--shadow); transition: background 0.3s; }
+        .toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; align-items: center; }
+        .group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        label { font-size: 0.95rem; color: var(--muted); }
+        input[type="checkbox"] { accent-color: var(--accent); }
+        button { background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.1); color: inherit; padding: 10px 14px; border-radius: 8px; cursor: pointer; transition: background 0.3s, transform 0.1s, box-shadow 0.3s; }
+        button.primary { background: linear-gradient(135deg, var(--accent) 0%, #3590ff 100%); border: none; color: #fff; font-weight: 500; }
+        button:hover { background: rgba(255, 255, 255, 0.2); box-shadow: 0 4px 15px var(--shadow); }
+        button.primary:hover { background: linear-gradient(135deg, #3590ff 0%, var(--accent) 100%); }
+        button:active { transform: translateY(1px); }
+
+        .editor { display: flex; gap: 20px; }
+        .editor-container { flex: 1; display: flex; gap: 20px; }
+        textarea, .preview {
+            flex: 1; min-height: 420px; resize: vertical; padding: 16px; border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1); background: var(--glass); color: inherit;
+            font-size: 1rem; line-height: 1.45; transition: background 0.3s, color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+        textarea { font-family: Arial, sans-serif; }
+        textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2); }
+        .preview { background: var(--card); overflow-y: auto; }
+        .markdown-body { background-color: transparent !important; color: var(--text) !important; }
+        .markdown-body a { color: var(--accent) !important; }
+
+        .meta { width: 220px; min-width: 180px; }
+        .meta .card-inner { background: transparent; padding: 8px; border-radius: 8px; }
+        .stat { font-size: 1rem; margin-bottom: 8px; }
+        .muted { color: var(--muted); font-size: 0.9rem; }
+        .small { font-size: 0.9rem; }
+        .controls { display: flex; flex-direction: column; gap: 10px; }
+        .row { display: flex; gap: 8px; }
+        .notice { font-size: 0.85rem; color: var(--muted); margin-top: 8px; }
+
+        .select-container { display: flex; gap: 8px; align-items: center; }
+        select {
+            padding: 8px;
+            border-radius: 8px;
+            background: var(--glass);
+            color: inherit;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            appearance: none;
+            cursor: pointer;
+            min-width: 80px;
+        }
+        select:focus { outline: none; border-color: var(--accent); }
+
+        @media (max-width: 820px) {
+            .editor { flex-direction: column; gap: 20px; }
+            .editor-container { flex-direction: column; }
+            .meta { width: 100%; }
+            .toolbar { flex-direction: column; align-items: flex-start; }
+            .group { width: 100%; justify-content: space-between; }
+        }
+        @media (max-width: 500px) {
+            h1 { font-size: 1.25rem; }
+            .toolbar .group:last-child {
+                flex-direction: column;
+                width: 100%;
+                gap: 8px;
+            }
+            .toolbar .group:last-child button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Bloco de Notas — Unificado</h1>
+            <button id="themeToggle">Alternar Tema</button>
+        </header>
+
+        <div class="card">
+            <div class="toolbar">
+                <div class="group">
+                    <label class="muted">Capitalização:</label>
+                    <button id="uppercaseBtn">MAIÚSCULO</button>
+                    <button id="lowercaseBtn">minúsculo</button>
+                    <button id="originalCaseBtn">Original</button>
+                </div>
+                <div class="group">
+                    <label class="muted">Alinhamento:</label>
+                    <button id="alignLeftBtn">Esquerda</button>
+                    <button id="alignRightBtn">Direita</button>
+                    <button id="alignCenterBtn">Centro</button>
+                    <button id="alignJustifyBtn">Justificado</button>
+                    <button id="alignOriginalBtn">Original</button>
+                </div>
+                <div class="group">
+                    <label class="muted">Fonte:</label>
+                    <div class="select-container">
+                        <select id="fontSizeSelect">
+                            <option value="14px">14px</option>
+                            <option value="16px" selected>16px</option>
+                            <option value="18px">18px</option>
+                            <option value="20px">20px</option>
+                            <option value="22px">22px</option>
+                            <option value="24px">24px</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor">
+                <div class="editor-container">
+                    <textarea id="note" placeholder="Digite ou cole aqui sua nota..." spellcheck="true"></textarea>
+                </div>
+
+                <aside class="meta">
+                    <div class="card-inner">
+                        <div class="stat"><strong id="chars">0</strong> caracteres</div>
+                        <div class="stat"><strong id="words">0</strong> palavras</div>
+                        <div class="stat muted">Salvamento: <span id="savedStatus">—</span></div>
+
+                        <div class="controls" style="margin-top:12px">
+                            <div class="row"><button id="saveBtn" class="primary">Salvar</button><button id="copyBtn">Copiar</button></div>
+                            <div class="row"><button id="exportTxtBtn">Exportar .txt</button><button id="exportPdfBtn">Exportar .pdf</button></div>
+                            <div class="row"><button id="clearBtn">Limpar</button><button id="loadBtn">Carregar salvo</button></div>
+                            <div class="row"><button id="delBtn">Apagar salvo</button></div>
+                            <div class="notice">Atalhos: <strong>Ctrl/Cmd + S</strong> salvar</div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        const note = document.getElementById('note');
+        const chars = document.getElementById('chars');
+        const words = document.getElementById('words');
+        const savedStatus = document.getElementById('savedStatus');
+        const saveBtn = document.getElementById('saveBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const exportTxtBtn = document.getElementById('exportTxtBtn');
+        const exportPdfBtn = document.getElementById('exportPdfBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const loadBtn = document.getElementById('loadBtn');
+        const delBtn = document.getElementById('delBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        
+        const uppercaseBtn = document.getElementById('uppercaseBtn');
+        const lowercaseBtn = document.getElementById('lowercaseBtn');
+        const originalCaseBtn = document.getElementById('originalCaseBtn');
+
+        const alignLeftBtn = document.getElementById('alignLeftBtn');
+        const alignRightBtn = document.getElementById('alignRightBtn');
+        const alignCenterBtn = document.getElementById('alignCenterBtn');
+        const alignJustifyBtn = document.getElementById('alignJustifyBtn');
+        const alignOriginalBtn = document.getElementById('alignOriginalBtn');
+
+        const fontSizeSelect = document.getElementById('fontSizeSelect');
+
+        const STORAGE_KEY = 'blocoNotas_unificado_v3';
+        let originalText = '';
+
+        function updateStats(text) {
+            chars.textContent = text.length;
+            words.textContent = (text.trim().length === 0) ? 0 : text.trim().split(/\s+/).length;
+        }
+
+        function loadSaved() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) {
+                const noteData = JSON.parse(data);
+                originalText = noteData.text;
+                note.value = originalText;
+                note.style.fontSize = noteData.fontSize;
+                note.style.textAlign = noteData.textAlign;
+                
+                fontSizeSelect.value = noteData.fontSize;
+                
+                updateStats(originalText);
+                savedStatus.textContent = 'salvo localmente';
+            } else {
+                savedStatus.textContent = '—';
+                note.value = '';
+                originalText = '';
+                updateStats('');
+            }
+        }
+
+        function save() {
+            const noteData = {
+                text: note.value,
+                fontSize: note.style.fontSize,
+                textAlign: note.style.textAlign
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(noteData));
+            savedStatus.textContent = 'salvo (manual)';
+            updateStats(note.value);
+        }
+
+        function exportTxt() {
+            const blob = new Blob([note.value], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'nota.txt';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        function exportPdf() {
+            const preview = document.createElement('div');
+            preview.innerHTML = note.value.replace(/\n/g, '<br>');
+            preview.style.fontFamily = 'Arial, sans-serif';
+            preview.style.fontSize = note.style.fontSize;
+            preview.style.textAlign = note.style.textAlign;
+            
+            html2pdf().from(preview).set({
+                margin: 10,
+                filename: 'nota.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).save();
+        }
+
+        async function copyToClipboard() {
+            try {
+                await navigator.clipboard.writeText(note.value);
+                savedStatus.textContent = 'copiado';
+            } catch (e) {
+                alert('Não foi possível copiar automaticamente.');
+            }
+        }
+
+        // Event Listeners
+        note.addEventListener('input', () => {
+            updateStats(note.value);
+            originalText = note.value;
+        });
+
+        uppercaseBtn.addEventListener('click', () => {
+            note.value = note.value.toUpperCase();
+        });
+
+        lowercaseBtn.addEventListener('click', () => {
+            note.value = note.value.toLowerCase();
+        });
+
+        originalCaseBtn.addEventListener('click', () => {
+            note.value = originalText;
+        });
+
+        alignLeftBtn.addEventListener('click', () => {
+            note.style.textAlign = 'left';
+        });
+
+        alignRightBtn.addEventListener('click', () => {
+            note.style.textAlign = 'right';
+        });
+
+        alignCenterBtn.addEventListener('click', () => {
+            note.style.textAlign = 'center';
+        });
+
+        alignJustifyBtn.addEventListener('click', () => {
+            note.style.textAlign = 'justify';
+        });
+        
+        alignOriginalBtn.addEventListener('click', () => {
+            note.style.textAlign = 'start';
+        });
+
+        fontSizeSelect.addEventListener('change', () => {
+            note.style.fontSize = fontSizeSelect.value;
+        });
+
+        saveBtn.addEventListener('click', save);
+        copyBtn.addEventListener('click', copyToClipboard);
+        exportTxtBtn.addEventListener('click', exportTxt);
+        exportPdfBtn.addEventListener('click', exportPdf);
+        clearBtn.addEventListener('click', () => {
+            if (confirm('Limpar o editor?')) {
+                note.value = '';
+                originalText = '';
+                updateStats('');
+                savedStatus.textContent = '—';
+            }
+        });
+        loadBtn.addEventListener('click', loadSaved);
+        delBtn.addEventListener('click', () => {
+            if (confirm('Apagar o conteúdo salvo localmente?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                savedStatus.textContent = 'salvo removido';
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                save();
+            }
+        });
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light');
+        });
+
+        loadSaved();
+        updateStats(note.value);
+    </script>
+</body>
+</html>
